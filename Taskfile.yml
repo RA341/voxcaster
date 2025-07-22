@@ -1,0 +1,28 @@
+version: '3'
+
+vars:
+  IMAGE_BASE: voxcaster
+  TARGET: "develop"
+
+tasks:
+  default:
+    cmds:
+      - task --list --sort=alphanumeric
+    silent: true
+
+  dkb:
+    desc: "Builds the main image for a specific target. Usage: task dk:b:<target>"
+    cmds:
+      - docker build . -t {{.IMAGE_BASE}}:{{.TARGET}}
+    preconditions:
+      - sh: 'test -n "{{.TARGET}}"'
+        msg: "The 'target' variable must be provided. Usage: task dk.<target-name>"
+
+  dk:
+    desc: "Builds and runs the main image. Usage: task dk"
+    cmds:
+      - task: dkb
+      - docker run --rm -p 8992:8000 {{.IMAGE_BASE}}:{{.TARGET}}
+    preconditions:
+      - sh: 'test -n "{{.TARGET}}"'
+        msg: "The 'target' variable must be provided. Usage: task dk:r.<target-name>"
