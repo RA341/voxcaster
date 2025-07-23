@@ -1,0 +1,2 @@
+configDir = "/config"
+

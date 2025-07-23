@@ -1,0 +1,667 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Voxcaster",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/voice/": {
+      "get": {
+        "tags": [
+          "voice"
+        ],
+        "summary": "Get Voices",
+        "description": "Get all available voices with optional filtering.",
+        "operationId": "get_voices_voice__get",
+        "parameters": [
+          {
+            "name": "language_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by language code",
+              "title": "Language Code"
+            },
+            "description": "Filter by language code"
+          },
+          {
+            "name": "quality",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by quality level",
+              "title": "Quality"
+            },
+            "description": "Filter by quality level"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 1000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Limit number of results",
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Limit number of results"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoicesListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/voice/downloaded": {
+      "get": {
+        "tags": [
+          "voice"
+        ],
+        "summary": "Get Voices Downloaded",
+        "description": "Get all voices that have been downloaded locally.",
+        "operationId": "get_voices_downloaded_voice_downloaded_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadedVoicesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/voice/{voice_key}": {
+      "get": {
+        "tags": [
+          "voice"
+        ],
+        "summary": "Get Voice By Key",
+        "description": "Get a specific voice by its key.",
+        "operationId": "get_voice_by_key_voice__voice_key__get",
+        "parameters": [
+          {
+            "name": "voice_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier for the voice",
+              "title": "Voice Key"
+            },
+            "description": "Unique identifier for the voice"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Voice"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "voice"
+        ],
+        "summary": "Delete Voice",
+        "description": "Delete a downloaded voice by its key.",
+        "operationId": "delete_voice_voice__voice_key__delete",
+        "parameters": [
+          {
+            "name": "voice_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier for the voice to delete",
+              "title": "Voice Key"
+            },
+            "description": "Unique identifier for the voice to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/voice/download": {
+      "post": {
+        "tags": [
+          "voice"
+        ],
+        "summary": "Download Voice",
+        "description": "Download a voice by its key.",
+        "operationId": "download_voice_voice_download_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DownloadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/voice/download/{download_id}/status": {
+      "get": {
+        "tags": [
+          "voice"
+        ],
+        "summary": "Get Download Status",
+        "description": "Get the status of a voice download.",
+        "operationId": "get_download_status_voice_download__download_id__status_get",
+        "parameters": [
+          {
+            "name": "download_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Download ID to check status for",
+              "title": "Download Id"
+            },
+            "description": "Download ID to check status for"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeleteResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "voice_key": {
+            "type": "string",
+            "title": "Voice Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message",
+          "voice_key"
+        ],
+        "title": "DeleteResponse"
+      },
+      "DownloadRequest": {
+        "properties": {
+          "voice_key": {
+            "type": "string",
+            "title": "Voice Key"
+          },
+          "quality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quality",
+            "default": "high"
+          }
+        },
+        "type": "object",
+        "required": [
+          "voice_key"
+        ],
+        "title": "DownloadRequest"
+      },
+      "DownloadResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "voice_key": {
+            "type": "string",
+            "title": "Voice Key"
+          },
+          "download_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Download Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message",
+          "voice_key"
+        ],
+        "title": "DownloadResponse"
+      },
+      "DownloadedVoicesResponse": {
+        "properties": {
+          "downloaded_voices": {
+            "items": {
+              "$ref": "#/components/schemas/Voice"
+            },
+            "type": "array",
+            "title": "Downloaded Voices"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "downloaded_voices",
+          "total"
+        ],
+        "title": "DownloadedVoicesResponse"
+      },
+      "FileInfo": {
+        "properties": {
+          "size_bytes": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Size Bytes",
+            "description": "File size in bytes"
+          },
+          "md5_digest": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 32,
+            "title": "Md5 Digest",
+            "description": "MD5 hash of the file"
+          }
+        },
+        "type": "object",
+        "required": [
+          "size_bytes",
+          "md5_digest"
+        ],
+        "title": "FileInfo",
+        "description": "File information model",
+        "example": {
+          "md5_digest": "d41d8cd98f00b204e9800998ecf8427e",
+          "size_bytes": 1048576
+        }
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Language": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Language code (e.g., 'en-US')"
+          },
+          "family": {
+            "type": "string",
+            "title": "Family",
+            "description": "Language family"
+          },
+          "region": {
+            "type": "string",
+            "title": "Region",
+            "description": "Geographic region"
+          },
+          "name_native": {
+            "type": "string",
+            "title": "Name Native",
+            "description": "Language name in native script"
+          },
+          "name_english": {
+            "type": "string",
+            "title": "Name English",
+            "description": "Language name in English"
+          },
+          "country_english": {
+            "type": "string",
+            "title": "Country English",
+            "description": "Country name in English"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "family",
+          "region",
+          "name_native",
+          "name_english",
+          "country_english"
+        ],
+        "title": "Language",
+        "description": "Language information model",
+        "example": {
+          "code": "en-US",
+          "country_english": "United States",
+          "family": "Germanic",
+          "name_english": "English",
+          "name_native": "English",
+          "region": "North America"
+        }
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "Voice": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key",
+            "description": "Unique identifier for the voice"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Display name of the voice"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language",
+            "description": "Language information"
+          },
+          "quality": {
+            "type": "string",
+            "title": "Quality",
+            "description": "Voice quality level"
+          },
+          "num_speakers": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Num Speakers",
+            "description": "Number of speakers in the voice model"
+          },
+          "speaker_id_map": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Speaker Id Map",
+            "description": "Mapping of speaker names to IDs"
+          },
+          "files": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/FileInfo"
+            },
+            "type": "object",
+            "title": "Files",
+            "description": "Dictionary of file types to file information"
+          },
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Aliases",
+            "description": "Alternative names for the voice"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "name",
+          "language",
+          "quality",
+          "num_speakers",
+          "files"
+        ],
+        "title": "Voice",
+        "description": "Voice model with language information and file details",
+        "example": {
+          "aliases": [
+            "jenny",
+            "jen_multi"
+          ],
+          "files": {
+            "config": {
+              "md5_digest": "b2c3d4e5f6789012345678901234567890",
+              "size_bytes": 2048
+            },
+            "model": {
+              "md5_digest": "a1b2c3d4e5f6789012345678901234567",
+              "size_bytes": 10485760
+            }
+          },
+          "key": "jenny_multilingual",
+          "language": {
+            "code": "en-US",
+            "country_english": "United States",
+            "family": "Germanic",
+            "name_english": "English",
+            "name_native": "English",
+            "region": "North America"
+          },
+          "name": "Jenny (Multilingual)",
+          "num_speakers": 1,
+          "quality": "high",
+          "speaker_id_map": {
+            "jenny": 0
+          }
+        }
+      },
+      "VoicesListResponse": {
+        "properties": {
+          "voices": {
+            "items": {
+              "$ref": "#/components/schemas/Voice"
+            },
+            "type": "array",
+            "title": "Voices"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "voices",
+          "total"
+        ],
+        "title": "VoicesListResponse"
+      }
+    }
+  }
+}
