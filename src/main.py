@@ -4,7 +4,7 @@ import uvicorn
 
 from src.api import app
 from src.config.config import configDir
-from src.tts.piper import outputs
+from src.tts.tts import outputs
 from src.voices.service import voiceModelsDir
 
 
